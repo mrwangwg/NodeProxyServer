@@ -99,7 +99,7 @@ function RequestProxy() {
 		let option = Config.protocal + '://' + Config.proxyTransferUrl + request.url;
 		
 		let proxy ;
-		if ('https' == Config.protocal) {
+		if ('https' === Config.protocal) {
 			proxy = https;
 		} else  {
 			proxy = http;
@@ -138,7 +138,7 @@ function RequestProxy() {
 		}
 
 		let proxy ;
-		if ('https' == Config.protocal) {
+		if ('https' === Config.protocal) {
 			proxy = https;
 		} else  {
 			proxy = http;

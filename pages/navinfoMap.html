@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>示例</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <script type="text/javascript" src="https://nmap.autoai.com/sdk/js/map?ak=您申请的AK值"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+
+        .info {
+            position: relative;
+            z-index: 1111;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="../map/mapbar.css">
+    <link rel="stylesheet" href="../map/demo.css">
+</head>
+
+<body>
+    <div id="map"></div>
+    <div class="info" style="width:24rem">
+        <p>地图上右击鼠标，弹出自定义样式的右键菜单</p>
+    </div>
+    <script src="../map/mapbar.js"></script>
+    <script>
+        var map = new nglp.Map({
+            container: 'map',
+            style: 'http://192.168.145.53:8080/styles/normal/style.json',
+            zoom: 11, //初始化地图层级
+            center: [116.397428, 39.90923], //初始化地图中心点
+            localIdeographFontFamily: "PingFang SC,Microsoft YaHei,微软雅黑,Arial,sans-serif,黑体" //字体本地读取
+        });
+        var lnglat = map.project(new nglp.LngLat(116.397, 39.918));
+
+        //创建右键菜单
+        var contextMenu = new nglp.ContextMenu();
+
+        //右键放大
+        contextMenu.addItem("放大一级", function () {
+            map.zoomIn();
+        });
+
+        //右键缩小
+        contextMenu.addItem("缩小一级", function () {
+            map.zoomOut();
+        });
+
+        //右键显示全国范围
+        contextMenu.addItem("缩放至全国范围", function (e) {
+            map.setCenter([108.946609, 34.262324]);
+            map.setZoom(3);
+        });
+
+        //右键添加Marker标记
+        contextMenu.addItem("添加标记", function (e) {
+            var marker = new nglp.Marker().setLngLat(map.unproject(e.point)).addTo(map);
+        });
+
+        var path = [
+            [116.362209, 39.887487],
+            [116.422897, 39.878002],
+            [116.372105, 39.90651],
+            [116.428945, 39.89663]
+        ];
+
+        var polyline = new nglp.Polyline({
+            path: path,
+            "line-join": 'round',
+            "line-cap": 'round',
+            "line-width": 10,
+            'line-blur': 0,
+            draggable: true,
+        });
+
+        //地图绑定鼠标右击事件——弹出右键菜单
+        map.on('contextmenu', function (e) {
+            contextMenu.open(map, e)
+        });
+        map.on('load', function () {
+            contextMenu.open(map, { point: lnglat });
+            polyline.addTo(map);
+            // 缩放地图到合适的视野级别
+            map.setFitView(polyline.path)
+        });
+
+    </script>
+</body>
+
+</html>
